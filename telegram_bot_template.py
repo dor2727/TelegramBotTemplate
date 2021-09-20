@@ -293,7 +293,7 @@ class TelegramScheduledCommands(object):
 		threading.Thread(target=run_scheduler).start()
 
 
-class TelegramAPIExample(TelegramSecureServer, TelegramCommandsExamples):
+class TelegramAPIExample(TelegramSecureServer, TelegramCommandsExamples, TelegramScheduledCommands):
 	def __init__(self):
 		# TelegramSecureServer
 		super().__init__()
@@ -302,6 +302,11 @@ class TelegramAPIExample(TelegramSecureServer, TelegramCommandsExamples):
 		# TelegramScheduledCommands
 		self.schedule_commands()
 		self.start_scheduler()
+
+		# alternatively, one can call:
+		# 	TelegramSecureServer.__init__(self)
+		# 	TelegramCommandsExamples.__init__(self)
+		# 	TelegramScheduledCommands.__init__(self)
 
 
 def test():
