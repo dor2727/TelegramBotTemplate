@@ -1,8 +1,8 @@
 import logging
+import telegram
 
 from TelegramBots.utils import *
 
-import telegram
 
 """
 verifies the user calling the function
