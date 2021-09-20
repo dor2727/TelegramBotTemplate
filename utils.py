@@ -1,3 +1,4 @@
+import os
 import sys
 import logging
 
@@ -63,9 +64,9 @@ A small util, getting the 'message' object from telegram's 'update' object
 """
 def get_message(update):
 	if update["message"] is not None:
-		return update['message']
+		return update["message"]
 	else:
-		return update['callback_query']['message']
+		return update["callback_query"]["message"]
 """
 """
 def get_chat_id(update):

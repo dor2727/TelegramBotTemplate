@@ -23,16 +23,18 @@ class TelegramServer(object):
 	def chat_id(self, update):
 		return get_chat_id(update)
 
-	def send_text(self, text, update):
+	def send_text(self, text, update, **kwargs):
 		self.updater.bot.sendMessage(
 			self.chat_id(update),
-			text
+			text,
+			**kwargs
 		)
 
-	def send_image(self, image_file, update):
+	def send_image(self, image_file, update, **kwargs):
 		self.updater.bot.send_photo(
 			self.chat_id(update),
-			photo=image_file
+			photo=image_file,
+			**kwargs
 		)
 
 	def loop(self):
@@ -122,11 +124,11 @@ class TelegramSecureServer(TelegramServer):
 				logging.error(f"MAIN_USER = {type(self.MAIN_USER)} : {str(self.MAIN_USER)}")
 				raise NotImplemented("An invalid value for self.MAIN_USER was given")
 
-	def send_text(self, text, update=None):
-		super().send_text(text, update)
+	def send_text(self, text, update=None, **kwargs):
+		super().send_text(text, update, **kwargs)
 
-	def send_image(self, image_file, update=None):
-		super().send_image(image_file, update)
+	def send_image(self, image_file, update=None, **kwargs):
+		super().send_image(image_file, update, **kwargs)
 
 
 
