@@ -78,10 +78,10 @@ class TelegramSecureServer(TelegramServer):
 		self._print_all_users()
 
 	def _get_all_users(self):
-		files = get_folder_files(USER_ID_FOLDER)
+		files = get_folder_files(CHAT_ID_FILEPATH)
 
 		user_files = filter(
-			lambda file_name: os.path.basename(file_name).startswith("chat_id_"),
+			is_chat_id,
 			files
 		)
 

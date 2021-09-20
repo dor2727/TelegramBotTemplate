@@ -89,3 +89,7 @@ def generate_menu_patter(menu_name):
 def is_menu_name(menu_name):
 	return menu_name.startswith("menu_")
 
+def is_chat_id(file_name):
+	return os.path.basename(file_name).startswith("chat_id_")
+
+
