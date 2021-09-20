@@ -65,7 +65,7 @@ class TelegramServer(object):
 
 class TelegramSecureServer(TelegramServer):
 	# log first, then check the whitelist (so that 'bad' calls are logged)
-	_wrappers = [wrapper_log, wrapper_whitelist]
+	_wrappers = [wrapper_log_secure, wrapper_whitelist]
 
 	# may have one of the following values:
 	# 1) None - no main user
@@ -148,7 +148,7 @@ class TelegramCommands(object):
 		def wrap(func):
 			# innermost wrapper is the last in the list
 			for w in self._wrappers[::-1]:
-				func = w(func)
+				func = w(func, self=self, func_name=func_name)
 			return func
 
 		# register commands
@@ -156,14 +156,14 @@ class TelegramCommands(object):
 			self.dp.add_handler(
 				CommandHandler(
 					strip_command_name(command_name),
-					getattr(self, command_name)
+					wrap( getattr(self, command_name) )
 				)
 			)
 		# register menus
 		for menu_name in self._get_all_menu_names():
 			self.dp.add_handler(
 				CallbackQueryHandler(
-					getattr(self, menu_name),
+					wrap( getattr(self, menu_name) ),
 					pattern=generate_menu_patter(menu_name),
 				)
 			)
