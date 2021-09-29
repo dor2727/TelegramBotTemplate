@@ -1,13 +1,24 @@
 import time
 import socket
 import logging
-import schedule
 import threading
+
+try:
+	import schedule
+except Exception as exc:
+	print("[!] Module schedule not found. please run: `pip install schedule`")
+	print("(or remove this line, as well as the class `TelegramScheduledCommands`)")
+	raise exc
 
 from TelegramBots.consts import *
 from TelegramBots.utils import *
 from TelegramBots.wrappers import *
 
+try:
+	import schedule
+except Exception as exc:
+	print("[!] Module telegram not found. please run: `pip install python-telegram-bot`")
+	raise exc
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler, CallbackQueryHandler
 
 
@@ -70,11 +81,11 @@ class TelegramSecureServer(TelegramServer):
 	# log first, then check the whitelist (so that 'bad' calls are logged)
 	_wrappers = [wrapper_log_secure, wrapper_whitelist]
 
-	# may have one of the following values:
+	# _MAIN_USER may have one of the following values:
 	# 1) None - no main user
 	# 2) a string - the name of the main user
 	# 3) a number - the chat_id of the main user
-	MAIN_USER = None
+	_MAIN_USER = None
 
 	def __init__(self):
 		super().__init__()
@@ -104,28 +115,35 @@ class TelegramSecureServer(TelegramServer):
 		for i in range(len(self.user_chat_ids)):
 			logging.info(f"    {i}) {self.user_names[i]} - {self.user_chat_ids[i]}")
 
+	@property
+	def MAIN_USER(self):
+		if type(self._MAIN_USER) is int:
+			if self._MAIN_USER in self.user_chat_ids:
+				return self._MAIN_USER
+			else:
+				logging.error(f"MAIN_USER ({self._MAIN_USER}) not in user_chat_ids ({str(self.user_chat_ids)})")
+				raise ValueError("MAIN_USER is not a registered user")
+
+		elif type(self._MAIN_USER) is str:
+			if self._MAIN_USER in self.user_names:
+				return self.users[self._MAIN_USER]
+			else:
+				logging.error(f"MAIN_USER ({self._MAIN_USER}) not in user_names ({str(self.user_names)})")
+				raise ValueError("MAIN_USER is not a registered user")
+
+		elif self._MAIN_USER is None:
+			raise ValueError("MAIN_USER was accessed, yet no MAIN_USER was defined")
+
+		else:
+			logging.error(f"MAIN_USER = {type(self._MAIN_USER)} : {str(self._MAIN_USER)}")
+			raise NotImplemented("An invalid value for self.MAIN_USER was given")
+
 	# changing function declaration - allowing `update` to be None - meaning the MAIN_USER
 	def chat_id(self, update=None):
 		if update:
 			return super().chat_id(update)
 		else:
-			if type(self.MAIN_USER) is int:
-				if self.MAIN_USER in self.user_chat_ids:
-					return self.MAIN_USER
-				else:
-					logging.error(f"MAIN_USER ({self.MAIN_USER}) not in user_chat_ids ({str(self.user_chat_ids)})")
-					raise ValueError("MAIN_USER is not a registered user")
-			elif type(self.MAIN_USER) is str:
-				if self.MAIN_USER in self.user_names:
-					return self.users[self.MAIN_USER]
-				else:
-					logging.error(f"MAIN_USER ({self.MAIN_USER}) not in user_names ({str(self.user_names)})")
-					raise ValueError("MAIN_USER is not a registered user")
-			elif self.MAIN_USER is None:
-				raise ValueError("No update was given with no MAIN_USER defined")
-			else:
-				logging.error(f"MAIN_USER = {type(self.MAIN_USER)} : {str(self.MAIN_USER)}")
-				raise NotImplemented("An invalid value for self.MAIN_USER was given")
+			return self.MAIN_USER
 
 	def send_text(self, text, update=None, **kwargs):
 		super().send_text(text, update, **kwargs)
@@ -172,7 +190,15 @@ class TelegramCommands(object):
 				)
 			)
 
-
+	# Usefull for setting bot commands in the BotFather
+	def command_list_commands(self, update=None, context=None):
+		self.send_text(
+			'\n'.join(
+				f"{strip_command_name(c)} - {strip_command_name(c)}"
+				for c in self._get_all_command_names()
+			),
+			update
+		)
 
 class TelegramScheduledCommands(object):
 	def schedule_commands(self):

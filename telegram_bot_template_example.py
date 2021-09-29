@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-import schedule
+try:
+	import schedule
+except Exception as exc:
+	print("[!] Module schedule not found. please run: `pip install schedule`")
+	print("(or remove this line, as well as the class `TelegramScheduledCommands`)")
+	raise exc
 
 from TelegramBots.consts import *
 from TelegramBots.utils import *
@@ -78,6 +83,7 @@ class TelegramCommands_Examples(TelegramCommands):
 			],
 			[
 				kbd("/menu_example_1"),
+				kbd("/list_commands"),
 			]
 		]
 

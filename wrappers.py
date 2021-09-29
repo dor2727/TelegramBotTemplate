@@ -1,3 +1,14 @@
+"""
+There are 3 wrappers defined here:
+- wrapper_log
+	logs the command, as well as its arguments.
+	This wrapper is used when no security measures (whilelisting users) is used.
+- wrapper_log_secure
+	logs the command, its arguments, and which user called the command
+	This wrapper is used when security measures are used.
+- wrapper_whitelist
+	Verifies user identity before calling the function being wrapped.
+"""
 import logging
 import telegram
 
