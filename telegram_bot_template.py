@@ -94,7 +94,12 @@ class TelegramSecureServer(TelegramServer):
 		self._print_all_users()
 
 	def _get_all_users(self):
-		files = get_folder_files(CHAT_ID_FILEPATH)
+		if os.path.isdir(CHAT_ID_FILEPATH):
+			files = get_folder_files(CHAT_ID_FILEPATH)
+		elif os.path.isfile(CHAT_ID_FILEPATH):
+			files = [CHAT_ID_FILEPATH]
+		else:
+			raise ValueError(f"Invalid CHAT_ID_FILEPATH ({CHAT_ID_FILEPATH})")
 
 		user_files = filter(
 			is_chat_id,
