@@ -35,18 +35,18 @@ def wrapper_whitelist(func, **wrapper_kwargs):
 
 			if chat_id in self.user_chat_ids:
 				user_name = self.user_names[self.user_chat_ids.index(chat_id)]
-				logging.info(f"    Whitelist - success - {chat_id} - {user_name}")
+				logging.info(f"  [+] Whitelist - success - {chat_id} - {user_name}")
 			else:
-				logging.warning(f"    Whitelist - failed - {chat_id}")
-				logging.warning(f"    Whitelist - failed - update: {str(update)}")
-				logging.warning(f"    Whitelist - failed - args: {str(args)}")
-				logging.warning(f"    Whitelist - failed - kwargs: {str(kwargs)}")
+				logging.warning(f"  [-] Whitelist - failed - {chat_id}")
+				logging.warning(f"  [-] Whitelist - failed - update: {str(update)}")
+				logging.warning(f"  [-] Whitelist - failed - args: {str(args)}")
+				logging.warning(f"  [-] Whitelist - failed - kwargs: {str(kwargs)}")
 				return None
 
 		else:
-			logging.error(f"    Whitelist - got to the forbidden else")
-			logging.warning(f"    Whitelist - failed - args: {str(args)}")
-			logging.warning(f"    Whitelist - failed - kwargs: {str(kwargs)}")
+			logging.error(f"  [-] Whitelist - got to the forbidden else")
+			logging.warning(f"  [-] Whitelist - failed - args: {str(args)}")
+			logging.warning(f"  [-] Whitelist - failed - kwargs: {str(kwargs)}")
 			return None
 
 		return func(*args, **kwargs)
@@ -72,7 +72,7 @@ def wrapper_log(func, **wrapper_kwargs):
 
 
 		if "scheduled" in kwargs and kwargs["scheduled"]:
-			logging.info(f"    Command - scheduled - {command_name}")
+			logging.info(f"[*] Command - scheduled - {command_name}")
 
 		else:
 			# args[1] is update
@@ -81,7 +81,7 @@ def wrapper_log(func, **wrapper_kwargs):
 			else:
 				command_text = "None"
 
-			logging.info(f"    Command ({command_name}) - text: {command_text}")
+			logging.info(f"[*] Command ({command_name}) - text: {command_text}")
 
 		return func(*args, **kwargs)
 
@@ -122,7 +122,7 @@ def wrapper_log_secure(func, **wrapper_kwargs):
 
 
 		if "scheduled" in kwargs and kwargs["scheduled"]:
-			logging.info(f"    Command - scheduled - {command_name}")
+			logging.info(f"[*] Command - scheduled - {command_name}")
 
 		else:
 			if len(args) >= 1 and type(args[0]) is telegram.update.Update:
@@ -132,7 +132,7 @@ def wrapper_log_secure(func, **wrapper_kwargs):
 				command_text = "None"
 				user_name = "None"
 
-			logging.info(f"    Command ({command_name}) - from user ({user_name}) - text: {command_text}")
+			logging.info(f"[*] Command ({command_name}) - from user ({user_name}) - text: {command_text}")
 
 		return func(*args, **kwargs)
 
