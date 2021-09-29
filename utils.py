@@ -92,5 +92,11 @@ def is_menu_name(menu_name):
 
 def is_chat_id(file_name):
 	return os.path.basename(file_name).startswith("chat_id_")
-
+def get_chat_id_username(file_name):
+	user_name = os.path.basename(file_name)[8:]
+	if not user_name:
+		user_name = "<no_name>"
+	return user_name
+def get_chat_id_from_file_name(file_name):
+	return int(read_file(file_name))
 

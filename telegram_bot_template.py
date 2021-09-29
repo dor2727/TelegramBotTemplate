@@ -110,8 +110,8 @@ class TelegramSecureServer(TelegramServer):
 		self.user_chat_ids = []
 
 		for f in user_files:
-			self.user_names.append(os.path.basename(f)[8:])
-			self.user_chat_ids.append(int(read_file(f)))
+			self.user_names.append(get_chat_id_username(f))
+			self.user_chat_ids.append(get_chat_id_from_file_name(f))
 
 		self.users = dict(zip(self.user_names, self.user_chat_ids))
 
