@@ -20,7 +20,7 @@ except Exception as exc:
 	print("[!] Module telegram not found. please run: `pip install python-telegram-bot`")
 	raise exc
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler, CallbackQueryHandler
-
+import telegram
 
 class TelegramServer(object):
 	_wrappers = [wrapper_log]
@@ -68,6 +68,12 @@ class TelegramServer(object):
 				else:
 					logging.warning(f"[*] Caught socket.gaierror ({exc.errno}) in main (loop) - continue")
 					logging.warning(str(exc))
+
+				continue
+
+			# telegram.error.NetworkError
+			except telegram.error.NetworkError as exc:
+				logging.warning(f"[*] Caught telegram.error.NetworkError ({str(exc)}) in main (loop) - continue")
 
 				continue
 
@@ -225,10 +231,15 @@ class TelegramScheduledCommands(object):
 				# socket.gaierror: [Errno -3] Temporary failure in name resolution
 				except socket.gaierror as exc:
 					if exc.errno == -3:
-						logging.warning(f"[*] Caught socket.gaierror (-3) in main (loop) - continue")
+						logging.warning(f"[*] Caught socket.gaierror (-3) in run_scheduler - continue")
 					else:
-						logging.warning(f"[*] Caught socket.gaierror ({exc.errno}) in main (loop) - continue")
+						logging.warning(f"[*] Caught socket.gaierror ({exc.errno}) in run_scheduler - continue")
 						logging.warning(str(exc))
+
+					continue
+
+				except telegram.error.NetworkError as exc:
+					logging.warning(f"[*] Caught telegram.error.NetworkError ({str(exc)}) in run_scheduler - continue")
 
 					continue
 
